@@ -1,0 +1,24 @@
+{
+    "name": "stevebauman/revision",
+    "description": "Revisions for Eloquent Models.",
+    "authors": [
+        {
+            "name": "Steve Bauman",
+            "email": "steven_bauman@outlook.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.4",
+        "illuminate/support": "5.*"
+    },
+    "archive": {
+        "exclude": ["/tests"]
+    },
+    "autoload": {
+        "psr-4": {
+            "Stevebauman\\Revision\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
