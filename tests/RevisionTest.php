@@ -35,5 +35,6 @@ class RevisionTest extends FunctionalTestCase
         $revision = Revision::find(1);
 
         $this->assertEquals($revision->revisionable_type, 'Stevebauman\Revision\Tests\Stubs\Models\Post');
+        $this->assertEquals($revision->key, 'created_at');
     }
 }
