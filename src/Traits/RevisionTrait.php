@@ -17,6 +17,18 @@ trait RevisionTrait
     }
 
     /**
+     * Returns the revision user object.
+     *
+     * @return mixed
+     */
+    public function getUserResponsible()
+    {
+        $model = $this->revisionable;
+
+        return $model->revisionUser();
+    }
+
+    /**
      * Returns the revisions column name.
      *
      * @return string
@@ -41,7 +53,7 @@ trait RevisionTrait
      */
     public function getOldValue()
     {
-        return $this->getValue('old_value');
+        return $this->getRevisedValue('old_value');
     }
 
     /**
@@ -51,10 +63,17 @@ trait RevisionTrait
      */
     public function getNewValue()
     {
-        return $this->getValue('new_value');
+        return $this->getRevisedValue('new_value');
     }
 
-    public function getValue($valueKey)
+    /**
+     * Returns the specified revisions key value.
+     *
+     * @param string $valueKey
+     *
+     * @return mixed
+     */
+    public function getRevisedValue($valueKey)
     {
         $model = $this->revisionable;
 
@@ -65,18 +84,6 @@ trait RevisionTrait
         }
 
         return $value;
-    }
-
-    /**
-     * Returns the revision user object.
-     *
-     * @return mixed
-     */
-    public function getUserResponsible()
-    {
-        $model = $this->revisionable;
-
-        return $model->revisionUser();
     }
 
     /**
