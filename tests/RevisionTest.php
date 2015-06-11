@@ -36,5 +36,12 @@ class RevisionTest extends FunctionalTestCase
 
         $this->assertEquals($revision->revisionable_type, 'Stevebauman\Revision\Tests\Stubs\Models\Post');
         $this->assertEquals($revision->key, 'created_at');
+        $this->assertNull($revision->old_value);
+        $this->assertEquals($revision->new_value, $post->created_at);
+    }
+
+    public function testBeforeSave()
+    {
+
     }
 }
