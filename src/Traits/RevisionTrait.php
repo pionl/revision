@@ -2,6 +2,8 @@
 
 namespace Stevebauman\Revision\Traits;
 
+use Illuminate\Database\Eloquent\Model;
+
 trait RevisionTrait
 {
     /**
@@ -23,13 +25,13 @@ trait RevisionTrait
     {
         $model = $this->revisionable;
 
-        if(property_exists($model, 'revisionColumnsFormatted') && is_array($model->revisionColumnsFormatted)) {
-            if(array_key_exists($this->key, $model->revisionColumnsFormatted)) {
-                return $model->revisionColumnsFormatted[$this->key];
-            }
+        $column = $this->key;
+
+        if(is_array($model->revisionColumnsFormatted) && array_key_exists($column, $model->revisionColumnsFormatted)) {
+            return $model->revisionColumnsFormatted[$column];
         }
 
-        return $this->key;
+        return $column;
     }
 
     /**
@@ -39,19 +41,7 @@ trait RevisionTrait
      */
     public function getOldValue()
     {
-        $model = $this->revisionable;
-
-        $oldValue = $this->old_value;
-
-        $accessor = $this->getAccessor($model);
-
-        if($accessor) {
-            if($model->hasGetMutator($accessor)) {
-                return $model->mutateAttribute($accessor, $oldValue);
-            }
-        }
-
-        return $oldValue;
+        return $this->getValue('old_value');
     }
 
     /**
@@ -61,19 +51,20 @@ trait RevisionTrait
      */
     public function getNewValue()
     {
+        return $this->getValue('new_value');
+    }
+
+    public function getValue($valueKey)
+    {
         $model = $this->revisionable;
 
-        $newValue = $this->new_value;
+        $value = $this->$valueKey;
 
-        $accessor = $this->getAccessor($model);
-
-        if($accessor) {
-            if($model->hasGetMutator($accessor)) {
-                return $model->mutateAttribute($accessor, $newValue);
-            }
+        if($means = $this->getColumnMeans($this->key, $model)) {
+            return $this->getColumnMeansProperty($means, $model, $value);
         }
 
-        return $newValue;
+        return $value;
     }
 
     /**
@@ -89,22 +80,64 @@ trait RevisionTrait
     }
 
     /**
-     * Retrieves a models accessor if it exists.
+     * Returns the keys accessor on the specified model.
      *
-     * @param $model
+     * If the key does not have an accessor, it returns false.
      *
-     * @return bool|Mixed
+     * @param int|string $key
+     * @param Model      $model
+     *
+     * @return bool|string
      */
-    private function getAccessor($model)
+    private function getColumnMeans($key, $model)
     {
-        if(property_exists($model, 'revisionColumnsMean') && is_array($model->revisionColumnsMean)) {
-            if(array_key_exists($this->key, $model->revisionColumnsMean)) {
-                $accessor = $model->revisionColumnsMean[$this->key];
-
-                return $accessor;
-            }
+        if(is_array($model->revisionColumnsMean) && array_key_exists($key, $model->revisionColumnsMean)) {
+            return $model->revisionColumnsMean[$key];
         }
 
         return false;
+    }
+
+    /**
+     * Retrieves a relationships
+     * nested property from a column.
+     *
+     * @param string $key
+     * @param Model  $model
+     * @param mixed  $value
+     *
+     * @return mixed
+     */
+    private function getColumnMeansProperty($key, $model, $value)
+    {
+        // Explode the dot notated key
+        $attributes = explode('.', $key);
+
+        // Assign a temporary object to the specified model
+        $tmpStr = $model;
+
+        // Go through each attribute
+        foreach ($attributes as $attribute) {
+            if ($attribute === end($attributes)) {
+                /*
+                 * If we're at the end of the attributes array,
+                 * we'll see if the temporary object is an instance
+                 * of an Eloquent Model. If so, we'll see if there's
+                 * a mutator set for the current attribute, and if
+                 * there is, we'll pass in the value to the mutator.
+                 */
+                if ($tmpStr instanceof Model) {
+                    if($tmpStr->hasGetMutator($attribute)) {
+                        $tmpStr = $tmpStr->mutateAttribute($attribute, $value);
+                    } else {
+                        $tmpStr = $tmpStr->$attribute;
+                    }
+                }
+            } else {
+                $tmpStr = $tmpStr->$attribute;
+            }
+        }
+
+        return $tmpStr;
     }
 }
