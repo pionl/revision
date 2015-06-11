@@ -40,6 +40,10 @@ trait HasRevisionsTrait
      */
     public static function bootHasRevisionsTrait()
     {
+        static::created(function(Model $model) {
+            $model->afterCreate();
+        });
+
         static::saving(function(Model $model) {
             $model->beforeSave();
         });
@@ -47,6 +51,15 @@ trait HasRevisionsTrait
         static::saved(function(Model $model) {
             $model->afterSave();
         });
+    }
+
+    /**
+     * Creates a new revision record of the created at
+     * date after a new model has been created.
+     */
+    public function afterCreate()
+    {
+        $this->processCreateRevisionRecord($this->getCreatedAtColumn(), null, $this->getAttribute('created_at'));
     }
 
     /**
@@ -72,25 +85,29 @@ trait HasRevisionsTrait
         $columns = $this->getRevisionColumns();
 
         foreach($columns as $column) {
-            $originalValue = $this->revisionOriginalAttributes[$column];
 
             /*
-             * Only create a new revision
-             * record if the value has changed
+             * Make sure the column exists
+             * inside the original attributes array
              */
-            if($originalValue  != $this->getAttribute($column)) {
+            if(array_key_exists($column, $this->revisionOriginalAttributes)) {
+                $originalValue = $this->revisionOriginalAttributes[$column];
 
-                // Construct a new revision model instance.
-                $revision = $this->revisions()->getRelated()->newInstance();
+                /*
+                 * Only create a new revision
+                 * record if the value has changed
+                 */
+                if($originalValue  != $this->getAttribute($column)) {
 
-                $revision->revisionable_type = get_class($this);
-                $revision->revisionable_id = $this->getKey();
-                $revision->user_id = $this->revisionUserId();
-                $revision->key = $column;
-                $revision->old_value = array_get($this->revisionOriginalAttributes, $column);
-                $revision->new_value = $this->getAttribute($column);
+                    // Retrieve the old value from the original attributes property.
+                    $oldValue = array_get($this->revisionOriginalAttributes, $column);
 
-                $revision->save();
+                    // Retrieve the new value from the current attributes.
+                    $newValue = $this->getAttribute($column);
+
+                    // Create a new revision record.
+                    $this->processCreateRevisionRecord($column, $oldValue, $newValue);
+                }
             }
         }
     }
@@ -114,13 +131,58 @@ trait HasRevisionsTrait
              */
             if(count($columns) === 1 && $columns[0] === '*')
             {
-                return array_keys($this->getAttributes());
-            } else
-            {
-                return $columns;
+                $columns = array_keys($this->getAttributes());
             }
+        } else {
+            $columns = [];
         }
 
-        return [];
+        return array_filter($columns, [$this, 'filterColumns']);
+    }
+
+    /**
+     * Filters the inserted column against the columns to avoid property.
+     *
+     * @param string $column
+     *
+     * @return bool|string
+     */
+    private function filterColumns($column)
+    {
+        $columnsToAvoid = $this->revisionColumnsToAvoid;
+
+        if(is_array($columnsToAvoid) && count($columnsToAvoid) > 0) {
+            if(in_array($column, $columnsToAvoid)) return false;
+        }
+
+        return $column;
+    }
+
+    /**
+     * Creates a new revision record.
+     *
+     * @param string|int $key
+     * @param mixed      $oldValue
+     * @param mixed      $newValue
+     *
+     * @return bool|Model
+     */
+    private function processCreateRevisionRecord($key, $oldValue, $newValue)
+    {
+        // Construct a new revision model instance.
+        $revision = $this->revisions()->getRelated()->newInstance();
+
+        $revision->revisionable_type = get_class($this);
+        $revision->revisionable_id = $this->getKey();
+        $revision->user_id = $this->revisionUserId();
+        $revision->key = $key;
+        $revision->old_value = $oldValue;
+        $revision->new_value = $newValue;
+
+        if($revision->save()) {
+            return $revision;
+        }
+
+        return false;
     }
 }
