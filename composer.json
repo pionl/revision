@@ -10,7 +10,8 @@
     "license": "MIT",
     "require": {
         "php": ">=5.4",
-        "illuminate/support": "5.*"
+        "illuminate/support": "5.*",
+        "illuminate/database": "5.*"
     },
     "archive": {
         "exclude": ["/tests"]
