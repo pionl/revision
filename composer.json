@@ -20,5 +20,10 @@
             "Stevebauman\\Revision\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Stevebauman\\Revision\\Tests\\": "tests/"
+        }
+    },
     "minimum-stability": "stable"
 }

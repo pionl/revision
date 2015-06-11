@@ -79,6 +79,10 @@ trait RevisionTrait
 
         $value = $this->$valueKey;
 
+        /*
+         * Check if the column key is inside
+         * the column means property array
+         */
         if($means = $this->getColumnMeans($this->key, $model)) {
             return $this->getColumnMeansProperty($means, $model, $value);
         }
@@ -106,8 +110,7 @@ trait RevisionTrait
     }
 
     /**
-     * Retrieves a relationships
-     * nested property from a column.
+     * Retrieves a relationships nested property from a column.
      *
      * @param string $key
      * @param Model  $model
@@ -129,14 +132,22 @@ trait RevisionTrait
                 /*
                  * If we're at the end of the attributes array,
                  * we'll see if the temporary object is an instance
-                 * of an Eloquent Model. If so, we'll see if there's
-                 * a mutator set for the current attribute, and if
-                 * there is, we'll pass in the value to the mutator.
+                 * of an Eloquent Model.
                  */
                 if ($tmpStr instanceof Model) {
                     if($tmpStr->hasGetMutator($attribute)) {
+                        /*
+                         * If the relationship model has a get mutator
+                         * for the current attrubte, we'll run it through
+                         * the mutator and pass on the revisioned value.
+                         */
                         $tmpStr = $tmpStr->mutateAttribute($attribute, $value);
                     } else {
+                        /*
+                         * Looks like the relationship model doesn't
+                         * have a mutator for the attribute, we'll
+                         * return the models attribute.
+                         */
                         $tmpStr = $tmpStr->$attribute;
                     }
                 }
