@@ -15,12 +15,4 @@ class Revision extends Model
      * @var string
      */
     protected $table = 'revisions';
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function revisionable()
-    {
-        return $this->morphTo();
-    }
 }

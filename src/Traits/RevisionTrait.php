@@ -4,7 +4,15 @@ namespace Stevebauman\Revision\Traits;
 
 trait RevisionTrait
 {
-    abstract public function revisionable();
+    /**
+     * The revisionable morphTo relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function revisionable()
+    {
+        return $this->morphTo();
+    }
 
     /**
      * Returns the revisions column name.
