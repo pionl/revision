@@ -207,3 +207,38 @@ To retrieve the new value of the record, use the method `getNewValue()`:
         <h5>There are no revisions to display.</h5>
     @endif
 
+#### Modifying the display of column names
+
+To change the display of your column name that is revisioned, insert the property `$revisionColumnsFormatted` on your model:
+
+    protected $revisionColumnsFormatted = [
+        'user_id' => 'User',
+        'title' => 'Post Title',
+        'description' => 'Post Description',
+    ];
+
+#### Modifying the display of values
+
+To change the display of your values that have been revisioned, insert the property `$revisionColumnsMean`. You can use
+dot notation syntax to indicate relationship values. For example:
+
+    protected $revisionColumnsMean = [
+        'user_id' => 'user.full_name',
+    ];
+
+You can even use laravel accessors with the `revisionColumnsMean` property.
+
+> **Note**: The revised value will be passed into the first parameter of the accessor.
+
+    protected $revisionColumnsMean = [
+        'status' => 'status_label',
+    ];
+    
+    public function getStatusLabelAttribute($status = null)
+    {
+        if(! $status) {
+            $status = $this->getAttribute('status');
+        }
+        
+        return view('status.label', ['status' => $status])->render();
+    }
