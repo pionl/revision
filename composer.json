@@ -1,6 +1,7 @@
 {
     "name": "stevebauman/revision",
     "description": "Revisions for Eloquent Models.",
+    "tags": ["revision", "revisionable", "laravel", "history", "tracking"],
     "authors": [
         {
             "name": "Steve Bauman",
