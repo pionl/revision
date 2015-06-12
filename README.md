@@ -90,7 +90,7 @@ Your `BaseModel`:
 
 #### Revision Columns
 
-You **must** insert the `revisionColumns` property on your model to track revisions.
+You **must** insert the `$revisionColumns` property on your model to track revisions.
 
 ###### Tracking All Columns
 
@@ -120,7 +120,49 @@ To track changes on specific columns, insert the column names you'd like to trac
 
 #### Displaying Revisions
 
-To display your revisions on a record, call the relationship accessor `revisions` like so:
+To display your revisions on a record, call the relationship accessor `revisions`. Remember, this is just
+a regular Laravel relationship, so you can eager load / lazy load your revisions as you please:
 
+    $post = Post::with(['revisions'])->find(1);
+    
+    return view('post.show', ['post' => $post]);
 
+// In your `post.show` view:
+
+    @if($post->revisions->count() > 0)
+        
+         <table class="table table-striped">
+         
+                <thead>
+                    <tr>
+                        <th>User Responsible</th>
+                        <th>Changed</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>On</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                @foreach($post->revisions as $revision)
+                    <tr>
+                        <td>{{ $revision->getUserResponsible()->first_name }} {{ $record->getUserResponsible()->last_name }}</td>
+                        <td>{{ $revision->getColumnName() }}</td>
+                        <td>
+                            @if(is_null($revision->getOldValue()))
+                                <em>None</em>
+                            @else
+                                {{ $revision->getOldValue() }}
+                            @endif
+                        </td>
+                        <td>{{ $revision->getNewValue() }}</td>
+                        <td>{{ $revision->created_at }}</td>
+                    </tr>
+                @endforeach
+                </tbody>
+                
+            </table>
+    @else
+        <h5>There are no revisions to display.</h5>
+    @endif
 
