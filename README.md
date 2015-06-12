@@ -118,6 +118,7 @@ To track changes on specific columns, insert the column names you'd like to trac
         ];
     }
 
+
 #### Displaying Revisions
 
 To display your revisions on a record, call the relationship accessor `revisions`. Remember, this is just
@@ -126,6 +127,46 @@ a regular Laravel relationship, so you can eager load / lazy load your revisions
     $post = Post::with(['revisions'])->find(1);
     
     return view('post.show', ['post' => $post]);
+
+On each revision record, you can use the following methods to display the revised data:
+
+###### getColumnName()
+
+To display the column name that the revision took place on, use the method `getColumnName()`:
+
+    $revision = Revision::find(1);
+    
+    echo $revision->getColumnName(); // Returns string
+    
+###### getUserResponsible()
+
+To retrieve the User that performed the revision, use the method `getUserResponsible()`:
+
+    $revision = Revision::find(1);
+    
+    $user = $revision->getUserResponsible(); // Returns user model
+    
+    echo $user->id;
+    echo $user->email;
+    echo $user->first_name;
+
+###### getOldValue()
+
+To retrieve the old value of the record, use the method `getOldValue()`:
+
+    $revision = Revision::find(1);
+    
+    echo $revision->getOldValue(); // Returns string
+    
+###### getNewValue()
+
+To retrieve the new value of the record, use the method `getNewValue()`:
+
+    $revision = Revision::find(1);
+    
+    echo $revision->getNewValue(); // Returns string
+
+###### Example
 
 // In your `post.show` view:
 
