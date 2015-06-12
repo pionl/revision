@@ -31,20 +31,25 @@ class RevisionTest extends FunctionalTestCase
         $post->save();
 
         $revisions = Revision::all();
-        $this->assertEquals(3, $revisions->count());
 
-        $createdAtRevision = $revisions->get(0);
+        $this->assertEquals(5, $revisions->count());
 
-        $this->assertEquals(Post::class, $createdAtRevision->revisionable_type);
-        $this->assertEquals(1, $createdAtRevision->revisionable_id);
-        $this->assertEquals('created_at', $createdAtRevision->key);
-        $this->assertNull($createdAtRevision->old_value);
-        $this->assertEquals($post->created_at, $createdAtRevision->new_value);
+        $idRevision = $revisions->get(0);
+
+        $this->assertEquals(Post::class, $idRevision->revisionable_type);
+        $this->assertEquals(1, $idRevision->revisionable_id);
+        $this->assertEquals('id', $idRevision->key);
+        $this->assertNull($idRevision->old_value);
+
+        // Test Revision User
+        $this->assertEquals(1, $idRevision->user_id);
+        $this->assertInstanceOf(User::class, $idRevision->getUserResponsible());
     }
 
     public function testModify()
     {
         Post::bootHasRevisionsTrait();
+
         $post = new Post();
 
         $post->title = 'Test';
@@ -55,9 +60,9 @@ class RevisionTest extends FunctionalTestCase
         $post->save();
 
         $revisions = Revision::all();
-        $this->assertEquals(4, $revisions->count());
+        $this->assertEquals(6, $revisions->count());
 
-        $titleRevision = $revisions->get(3);
+        $titleRevision = $revisions->get(5);
 
         $this->assertEquals('title', $titleRevision->key);
         $this->assertEquals('Test', $titleRevision->old_value);
@@ -78,10 +83,28 @@ class RevisionTest extends FunctionalTestCase
         $revisions = Revision::all();
 
         $this->assertEquals(1, $revisions->count());
+        $this->assertEquals('title', $revisions->get(0)->key);
+        $this->assertEquals('Testing', $revisions->get(0)->new_value);
+        $this->assertNull($revisions->get(0)->old_value);
+    }
 
-        $titleRevision = $revisions->get(0);
-        $this->assertEquals('title', $titleRevision->key);
-        $this->assertNull($titleRevision->old_value);
-        $this->assertEquals('Testing', $titleRevision->new_value);
+    public function testAvoidColumns()
+    {
+        Post::bootHasRevisionsTrait();
+
+        $post = new Post();
+
+        $post->setRevisionColumnsToAvoid(['title']);
+        $post->title = 'Testing';
+        $post->description = 'Testing';
+        $post->save();
+
+        $revisions = Revision::all();
+
+        $this->assertEquals(4, $revisions->count());
+        $this->assertEquals('id', $revisions->get(0)->key);
+        $this->assertEquals('description', $revisions->get(1)->key);
+        $this->assertEquals('created_at', $revisions->get(2)->key);
+        $this->assertEquals('updated_at', $revisions->get(3)->key);
     }
 }

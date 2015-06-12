@@ -2,6 +2,7 @@
 
 namespace Stevebauman\Revision\Traits;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasRevisionsTrait
@@ -40,10 +41,6 @@ trait HasRevisionsTrait
      */
     public static function bootHasRevisionsTrait()
     {
-        static::created(function(Model $model) {
-            $model->afterCreate();
-        });
-
         static::saving(function(Model $model) {
             $model->beforeSave();
         });
@@ -51,19 +48,6 @@ trait HasRevisionsTrait
         static::saved(function(Model $model) {
             $model->afterSave();
         });
-    }
-
-    /**
-     * Creates a new revision record of the created at
-     * date after a new model has been created.
-     */
-    public function afterCreate()
-    {
-        $createdColumn = $this->getCreatedAtColumn();
-
-        if(in_array($createdColumn, $this->getRevisionColumns())) {
-            $this->processCreateRevisionRecord($this->getCreatedAtColumn(), null, $this->getAttribute('created_at'));
-        }
     }
 
     /**
@@ -125,7 +109,25 @@ trait HasRevisionsTrait
      */
     public function setRevisionColumns(array $columns = ['*'])
     {
-        $this->revisionColumns = $columns;
+        if(property_exists($this, 'revisionColumns')) {
+            $this->revisionColumns = $columns;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the revision columns to avoid.
+     *
+     * @param array $columns
+     *
+     * @return $this
+     */
+    public function setRevisionColumnsToAvoid(array $columns = [])
+    {
+        if(property_exists($this, 'revisionColumnsToAvoid')) {
+            $this->revisionColumnsToAvoid = $columns;
+        }
 
         return $this;
     }
@@ -133,13 +135,13 @@ trait HasRevisionsTrait
     /**
      * Returns the revision columns.
      *
-     * @return array|bool
+     * @return array
      */
     private function getRevisionColumns()
     {
         $columns = $this->revisionColumns;
 
-        if(count($columns) > 0)
+        if(is_array($columns) && count($columns) > 0)
         {
             /*
              * If the amount of columns is equal to one,
@@ -149,31 +151,23 @@ trait HasRevisionsTrait
              */
             if(count($columns) === 1 && $columns[0] === '*')
             {
-                $columns = array_keys($this->getAttributes());
+                $columns = Schema::getColumnListing($this->getTable());
             }
         } else {
             $columns = [];
         }
 
-        return array_filter($columns, [$this, 'filterColumns']);
-    }
+        // Filter the returned columns by the columns to avoid
+        return array_filter($columns, function($column)
+        {
+            $columnsToAvoid = $this->revisionColumnsToAvoid;
 
-    /**
-     * Filters the inserted column against the columns to avoid property.
-     *
-     * @param string $column
-     *
-     * @return bool|string
-     */
-    private function filterColumns($column)
-    {
-        $columnsToAvoid = $this->revisionColumnsToAvoid;
+            if(is_array($columnsToAvoid) && count($columnsToAvoid) > 0) {
+                if(in_array($column, $columnsToAvoid)) return false;
+            }
 
-        if(is_array($columnsToAvoid) && count($columnsToAvoid) > 0) {
-            if(in_array($column, $columnsToAvoid)) return false;
-        }
-
-        return $column;
+            return $column;
+        });
     }
 
     /**

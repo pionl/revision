@@ -13,6 +13,8 @@ class Post extends Model
 
     protected $revisionColumns = ['*'];
 
+    protected $revisionColumnsToAvoid = [];
+
     public function revisions()
     {
         return $this->morphMany('Stevebauman\Revision\Models\Revision', 'revisionable');

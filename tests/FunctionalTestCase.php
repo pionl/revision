@@ -2,7 +2,7 @@
 
 namespace Stevebauman\Revision\Tests;
 
-use Illuminate\Database\Capsule\Manager as DB;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase;
 
 abstract class FunctionalTestCase extends TestCase
@@ -11,43 +11,42 @@ abstract class FunctionalTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->configureDatabase();
         $this->migrateTables();
     }
 
-    private function configureDatabase()
+    /**
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     *
+     * @return void
+     */
+    protected function getEnvironmentSetUp($app)
     {
-        $db = new DB();
-
-        $db->addConnection([
-            'driver' => 'sqlite',
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver'   => 'sqlite',
             'database' => ':memory:',
-            'charset' => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
-
-        $db->bootEloquent();
-
-        $db->setAsGlobal();
     }
 
     private function migrateTables()
     {
-        DB::schema()->create('users', function ($table) {
+        Schema::create('users', function ($table) {
             $table->increments('id');
             $table->string('username');
             $table->timestamps();
         });
 
-        DB::schema()->create('posts', function ($table) {
+        Schema::create('posts', function ($table) {
             $table->increments('id');
             $table->string('title');
             $table->text('description');
             $table->timestamps();
         });
 
-        DB::schema()->create('revisions', function ($table) {
+        Schema::create('revisions', function ($table) {
             $table->increments('id');
             $table->string('revisionable_type');
             $table->integer('revisionable_id');
