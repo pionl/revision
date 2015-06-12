@@ -2,6 +2,9 @@
 
 [![Travis CI](https://img.shields.io/travis/stevebauman/revision.svg?style=flat-square)](https://travis-ci.org/stevebauman/revision)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/stevebauman/revision.svg?style=flat-square)](https://scrutinizer-ci.com/g/stevebauman/revision/?branch=master)
+[![Latest Stable Version](https://img.shields.io/packagist/v/stevebauman/revision.svg?style=flat-square)](https://packagist.org/packages/stevebauman/revision)
+[![Total Downloads](https://img.shields.io/packagist/dt/stevebauman/revision.svg?style=flat-square)](https://packagist.org/packages/stevebauman/revision)
+[![License](https://img.shields.io/packagist/l/stevebauman/revision.svg?style=flat-square)](https://packagist.org/packages/stevebauman/revision)
 
 ### Installation
 
