@@ -22,9 +22,6 @@ class RevisionTest extends FunctionalTestCase
         $this->user = $user;
     }
 
-    /**
-     * @test
-     */
     public function testCreate()
     {
         $post = new Post();
@@ -38,16 +35,13 @@ class RevisionTest extends FunctionalTestCase
 
         $createdAtRevision = $revisions->get(0);
 
-        $this->assertEquals('Stevebauman\Revision\Tests\Stubs\Models\Post', $createdAtRevision->revisionable_type);
+        $this->assertEquals(Post::class, $createdAtRevision->revisionable_type);
         $this->assertEquals(1, $createdAtRevision->revisionable_id);
         $this->assertEquals('created_at', $createdAtRevision->key);
         $this->assertNull($createdAtRevision->old_value);
         $this->assertEquals($post->created_at, $createdAtRevision->new_value);
     }
 
-    /**
-     * @test
-     */
     public function testModify()
     {
         Post::bootHasRevisionsTrait();
@@ -68,5 +62,26 @@ class RevisionTest extends FunctionalTestCase
         $this->assertEquals('title', $titleRevision->key);
         $this->assertEquals('Test', $titleRevision->old_value);
         $this->assertEquals('Modified', $titleRevision->new_value);
+    }
+
+    public function testOnlyColumns()
+    {
+        Post::bootHasRevisionsTrait();
+
+        $post = new Post();
+        $post->setRevisionColumns(['title']);
+
+        $post->title = 'Testing';
+        $post->description = 'Testing';
+        $post->save();
+
+        $revisions = Revision::all();
+
+        $this->assertEquals(1, $revisions->count());
+
+        $titleRevision = $revisions->get(0);
+        $this->assertEquals('title', $titleRevision->key);
+        $this->assertNull($titleRevision->old_value);
+        $this->assertEquals('Testing', $titleRevision->new_value);
     }
 }

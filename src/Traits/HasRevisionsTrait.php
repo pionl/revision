@@ -59,7 +59,11 @@ trait HasRevisionsTrait
      */
     public function afterCreate()
     {
-        $this->processCreateRevisionRecord($this->getCreatedAtColumn(), null, $this->getAttribute('created_at'));
+        $createdColumn = $this->getCreatedAtColumn();
+
+        if(in_array($createdColumn, $this->getRevisionColumns())) {
+            $this->processCreateRevisionRecord($this->getCreatedAtColumn(), null, $this->getAttribute('created_at'));
+        }
     }
 
     /**
@@ -110,6 +114,20 @@ trait HasRevisionsTrait
                 }
             }
         }
+    }
+
+    /**
+     * Sets the revision columns.
+     *
+     * @param array $columns
+     *
+     * @return $this
+     */
+    public function setRevisionColumns(array $columns = ['*'])
+    {
+        $this->revisionColumns = $columns;
+
+        return $this;
     }
 
     /**

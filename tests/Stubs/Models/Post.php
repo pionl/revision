@@ -11,7 +11,7 @@ class Post extends Model
 
     protected $table = 'posts';
 
-    public $revisionColumns = ['*'];
+    protected $revisionColumns = ['*'];
 
     public function revisions()
     {
