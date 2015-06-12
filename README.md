@@ -19,6 +19,8 @@ You're all set!
 
 ### Usage
 
+#### The Trait
+
 Insert the `Stevebauman\Revision\Traits\HasRevisionsTrait` onto your model:
     
     use Stevebauman\Revision\Traits\HasRevisionsTrait;
@@ -27,3 +29,34 @@ Insert the `Stevebauman\Revision\Traits\HasRevisionsTrait` onto your model:
     {
         use HasRevisionsTrait;
     }
+
+#### Revision Columns
+
+You **must** insert the `revisionColumns` property on your model to track revisions.
+
+###### Tracking All Columns
+
+To track all changes on every column on the database table, use an asterisk like so:
+
+    class Post extends Model
+    {
+        protected $table = 'posts';
+        
+        protected $revisionColumns = ['*'];
+    }
+    
+###### Tracking Specific Columns
+
+To track changes on specific columns, insert the column names you'd like to track like so:
+
+    class Post extends Model
+    {
+        protected $table = 'posts';
+        
+        protected $revisionColumns = [
+            'tile', 
+            'description',
+        ];
+    }
+
+
