@@ -68,6 +68,5 @@ class RevisionTest extends FunctionalTestCase
         $this->assertEquals('title', $titleRevision->key);
         $this->assertEquals('Test', $titleRevision->old_value);
         $this->assertEquals('Modified', $titleRevision->new_value);
-
     }
 }
