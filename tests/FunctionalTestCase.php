@@ -3,8 +3,9 @@
 namespace Stevebauman\Revision\Tests;
 
 use Illuminate\Database\Capsule\Manager as DB;
+use Orchestra\Testbench\TestCase;
 
-abstract class FunctionalTestCase extends \PHPUnit_Framework_TestCase
+abstract class FunctionalTestCase extends TestCase
 {
     public function setUp()
     {

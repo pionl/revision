@@ -22,7 +22,10 @@ class RevisionTest extends FunctionalTestCase
         $this->user = $user;
     }
 
-    public function testAfterCreate()
+    /**
+     * @test
+     */
+    public function testCreate()
     {
         $post = new Post();
 
@@ -30,18 +33,40 @@ class RevisionTest extends FunctionalTestCase
         $post->description = 'Testing';
         $post->save();
 
-        $post->afterCreate();
+        $revisions = Revision::all();
+        $this->assertEquals(3, $revisions->count());
 
-        $revision = Revision::find(1);
+        $createdAtRevision = $revisions->get(0);
 
-        $this->assertEquals($revision->revisionable_type, 'Stevebauman\Revision\Tests\Stubs\Models\Post');
-        $this->assertEquals($revision->key, 'created_at');
-        $this->assertNull($revision->old_value);
-        $this->assertEquals($revision->new_value, $post->created_at);
+        $this->assertEquals('Stevebauman\Revision\Tests\Stubs\Models\Post', $createdAtRevision->revisionable_type);
+        $this->assertEquals(1, $createdAtRevision->revisionable_id);
+        $this->assertEquals('created_at', $createdAtRevision->key);
+        $this->assertNull($createdAtRevision->old_value);
+        $this->assertEquals($post->created_at, $createdAtRevision->new_value);
     }
 
-    public function testBeforeSave()
+    /**
+     * @test
+     */
+    public function testModify()
     {
+        Post::bootHasRevisionsTrait();
+        $post = new Post();
+
+        $post->title = 'Test';
+        $post->description = 'Testing';
+        $post->save();
+
+        $post->title = 'Modified';
+        $post->save();
+
+        $revisions = Revision::all();
+        $this->assertEquals(4, $revisions->count());
+
+        $titleRevision = $revisions->get(3);
+
+        $this->assertEquals('Test', $titleRevision->old_value);
+        $this->assertEquals('Modified', $titleRevision->new_value);
 
     }
 }
