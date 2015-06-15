@@ -101,6 +101,26 @@ trait HasRevisionsTrait
     }
 
     /**
+     * Returns the revision columns formatted array.
+     *
+     * @return null|array
+     */
+    public function getRevisionColumnsFormatted()
+    {
+        return $this->revisionColumnsFormatted;
+    }
+
+    /**
+     * Returns the revision columns mean array.
+     *
+     * @return null|array
+     */
+    public function getRevisionColumnsMean()
+    {
+        return $this->revisionColumnsMean;
+    }
+
+    /**
      * Sets the revision columns.
      *
      * @param array $columns
