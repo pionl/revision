@@ -40,10 +40,15 @@ abstract class FunctionalTestCase extends TestCase
         });
 
         Schema::create('posts', function ($table) {
+            $table->integer('user_id')->unsigned()->nullable();
             $table->increments('id');
             $table->string('title');
             $table->text('description');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onUpdate('restrict')
+                ->onDelete('set null');
         });
 
         Schema::create('revisions', function ($table) {

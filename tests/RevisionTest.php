@@ -107,4 +107,39 @@ class RevisionTest extends FunctionalTestCase
         $this->assertEquals('created_at', $revisions->get(2)->key);
         $this->assertEquals('updated_at', $revisions->get(3)->key);
     }
+
+    public function testColumnFormatting()
+    {
+        Post::bootHasRevisionsTrait();
+
+        $post = new Post();
+
+        $post->title = 'Testing';
+        $post->description = 'Testing';
+        $post->save();
+
+        $revisions = $post->revisions;
+
+        $this->assertEquals('ID', $revisions->get(0)->getColumnName());
+        $this->assertEquals('Post Title', $revisions->get(1)->getColumnName());
+        $this->assertEquals('Post Description', $revisions->get(2)->getColumnName());
+        $this->assertEquals('Created', $revisions->get(3)->getColumnName());
+        $this->assertEquals('Updated', $revisions->get(4)->getColumnName());
+    }
+
+    public function testColumnMeans()
+    {
+        Post::bootHasRevisionsTrait();
+
+        $post = new Post();
+
+        $post->user_id = $this->user->id;
+        $post->title = 'Testing';
+        $post->description = 'Testing';
+        $post->save();
+
+        $revisions = $post->revisions;
+
+        $this->assertEquals('Test', $revisions->get(0)->getNewValue());
+    }
 }
