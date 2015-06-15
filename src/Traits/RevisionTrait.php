@@ -39,8 +39,10 @@ trait RevisionTrait
 
         $column = $this->key;
 
-        if(is_array($model->revisionColumnsFormatted) && array_key_exists($column, $model->revisionColumnsFormatted)) {
-            return $model->revisionColumnsFormatted[$column];
+        $formattedColumns = $model->getRevisionColumnsFormatted();
+
+        if(is_array($formattedColumns) && array_key_exists($column, $formattedColumns)) {
+            return $formattedColumns[$column];
         }
 
         return $column;
@@ -102,8 +104,10 @@ trait RevisionTrait
      */
     private function getColumnMeans($key, $model)
     {
-        if(is_array($model->revisionColumnsMean) && array_key_exists($key, $model->revisionColumnsMean)) {
-            return $model->revisionColumnsMean[$key];
+        $columnsMean = $model->getRevisionColumnsMean();
+
+        if(is_array($columnsMean) && array_key_exists($key, $columnsMean)) {
+            return $columnsMean[$key];
         }
 
         return false;
