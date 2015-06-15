@@ -142,4 +142,30 @@ class RevisionTest extends FunctionalTestCase
 
         $this->assertEquals('Test', $revisions->get(0)->getNewValue());
     }
+
+    public function testGetRevisionColumnsFormatted()
+    {
+        $post = new Post();
+
+        $columns = [
+            'id' => 'ID',
+            'created_at' => 'Created',
+            'updated_at' => 'Updated',
+            'title' => 'Post Title',
+            'description' => 'Post Description',
+        ];
+
+        $this->assertEquals($columns, $post->getRevisionColumnsFormatted());
+    }
+
+    public function testGetRevisionColumnsMean()
+    {
+        $post = new Post();
+
+        $means = [
+            'user_id' => 'user.username'
+        ];
+
+        $this->assertEquals($means, $post->getRevisionColumnsMean());
+    }
 }

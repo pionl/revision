@@ -32,7 +32,7 @@ Insert the `Stevebauman\Revision\Traits\HasRevisionsTrait` onto your base model:
     {
         use HasRevisionsTrait;
         
-         public function revisions()
+        public function revisions()
         {
             return $this->morphMany('Stevebauman\Revision\Models\Revision', 'revisionable');
         }
