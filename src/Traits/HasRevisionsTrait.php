@@ -86,7 +86,6 @@ trait HasRevisionsTrait
                  * record if the value has changed
                  */
                 if($originalValue  != $this->getAttribute($column)) {
-
                     // Retrieve the old value from the original attributes property.
                     $oldValue = array_get($this->revisionOriginalAttributes, $column);
 
