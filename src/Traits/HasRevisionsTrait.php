@@ -80,7 +80,6 @@ trait HasRevisionsTrait
         $columns = $this->getRevisionColumns();
 
         foreach($columns as $column) {
-
             /*
              * Make sure the column exists
              * inside the original attributes array
