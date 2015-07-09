@@ -22,6 +22,24 @@ You're all set!
 
 ### Setup
 
+Create the `Revision` model and insert the `belongsTo()` or `hasOne()` `user()` relationship as well as the `RevisionTrait`:
+
+    namespace App\Models;
+    
+    use Stevebauman\Revision\Traits\RevisionTrait;
+    
+    class Revision extends Eloquent
+    {
+        use RevisionTrait;
+    
+        protected $table = 'revisions';
+        
+        public function user()
+        {
+            return $this->belongsTo('App\Models\User');
+        }
+    }
+
 Insert the `Stevebauman\Revision\Traits\HasRevisionsTrait` onto your base model:
     
     namespace App\Models;
@@ -36,12 +54,7 @@ Insert the `Stevebauman\Revision\Traits\HasRevisionsTrait` onto your base model:
         {
             return $this->morphMany('Stevebauman\Revision\Models\Revision', 'revisionable');
         }
-    
-        public function revisionUser()
-        {
-            return $this->hasOne('App\Models\User');
-        }
-    
+        
         public function revisionUserId()
         {
             return Auth::user()->id;
