@@ -16,7 +16,7 @@ class RevisionTest extends FunctionalTestCase
 
         $user = new User();
 
-        $user->username = 'Test';
+        $user->username = 'User One';
         $user->save();
 
         $this->user = $user;
@@ -140,7 +140,7 @@ class RevisionTest extends FunctionalTestCase
 
         $revisions = $post->revisions;
 
-        $this->assertEquals('Test', $revisions->get(0)->getNewValue());
+        $this->assertEquals('User One', $revisions->get(0)->getNewValue());
     }
 
     public function testGetRevisionColumnsFormatted()
@@ -167,5 +167,24 @@ class RevisionTest extends FunctionalTestCase
         ];
 
         $this->assertEquals($means, $post->getRevisionColumnsMean());
+    }
+
+    public function testGetUserResponsible()
+    {
+        Post::bootHasRevisionsTrait();
+
+        $post = new Post();
+
+        $post->user_id = $this->user->id;
+        $post->title = 'Testing';
+        $post->description = 'Testing';
+        $post->save();
+
+        $revisions = $post->revisions;
+
+        $user = $revisions->get(0)->getUserResponsible();
+
+        $this->assertEquals(1, $user->id);
+        $this->assertEquals('User One', $user->username);
     }
 }
