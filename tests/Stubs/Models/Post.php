@@ -34,16 +34,11 @@ class Post extends Model
 
     public function revisions()
     {
-        return $this->morphMany('Stevebauman\Revision\Models\Revision', 'revisionable');
-    }
-
-    public function revisionUser()
-    {
-        return User::find(1);
+        return $this->morphMany(Revision::class, 'revisionable');
     }
 
     public function revisionUserId()
     {
-        return $this->revisionUser()->id;
+        return User::first()->getKey();
     }
 }

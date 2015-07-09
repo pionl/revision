@@ -2,7 +2,7 @@
 
 namespace Stevebauman\Revision\Tests;
 
-use Stevebauman\Revision\Models\Revision;
+use Stevebauman\Revision\Tests\Stubs\Models\Revision;
 use Stevebauman\Revision\Tests\Stubs\Models\User;
 use Stevebauman\Revision\Tests\Stubs\Models\Post;
 

@@ -22,13 +22,6 @@ trait HasRevisionsTrait
     abstract public function revisions();
 
     /**
-     * The hasOne revision user relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    abstract public function revisionUser();
-
-    /**
      * The current users ID for storage in revisions.
      *
      * @return int|string

@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 trait RevisionTrait
 {
     /**
+     * The belongsTo user relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    abstract public function user();
+
+    /**
      * The revisionable morphTo relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
@@ -23,9 +30,7 @@ trait RevisionTrait
      */
     public function getUserResponsible()
     {
-        $model = $this->revisionable;
-
-        return $model->revisionUser();
+        return $this->user;
     }
 
     /**
