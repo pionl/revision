@@ -44,7 +44,7 @@ Insert the `Stevebauman\Revision\Traits\HasRevisionsTrait` onto your base model:
     
         public function revisionUserId()
         {
-            return $this->revisionUser->id;
+            return Auth::user()->id;
         }
     }
 
