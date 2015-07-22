@@ -86,7 +86,7 @@ Your `BaseModel`:
     {
         use HasRevisionsTrait;
         
-         public function revisions()
+        public function revisions()
         {
             return $this->morphMany('App\Models\Revision', 'revisionable');
         }
