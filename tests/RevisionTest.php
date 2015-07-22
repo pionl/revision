@@ -48,8 +48,6 @@ class RevisionTest extends FunctionalTestCase
 
     public function testModify()
     {
-        Post::bootHasRevisionsTrait();
-
         $post = new Post();
 
         $post->title = 'Test';
@@ -71,8 +69,6 @@ class RevisionTest extends FunctionalTestCase
 
     public function testOnlyColumns()
     {
-        Post::bootHasRevisionsTrait();
-
         $post = new Post();
         $post->setRevisionColumns(['title']);
 
@@ -90,8 +86,6 @@ class RevisionTest extends FunctionalTestCase
 
     public function testAvoidColumns()
     {
-        Post::bootHasRevisionsTrait();
-
         $post = new Post();
 
         $post->setRevisionColumnsToAvoid(['title']);
@@ -110,8 +104,6 @@ class RevisionTest extends FunctionalTestCase
 
     public function testColumnFormatting()
     {
-        Post::bootHasRevisionsTrait();
-
         $post = new Post();
 
         $post->title = 'Testing';
@@ -129,8 +121,6 @@ class RevisionTest extends FunctionalTestCase
 
     public function testColumnMeans()
     {
-        Post::bootHasRevisionsTrait();
-
         $post = new Post();
 
         $post->user_id = $this->user->id;
@@ -171,8 +161,6 @@ class RevisionTest extends FunctionalTestCase
 
     public function testGetUserResponsible()
     {
-        Post::bootHasRevisionsTrait();
-
         $post = new Post();
 
         $post->user_id = $this->user->id;
