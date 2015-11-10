@@ -55,9 +55,14 @@ Insert the `Stevebauman\Revision\Traits\HasRevisionsTrait` onto your base model:
             return $this->morphMany('Stevebauman\Revision\Models\Revision', 'revisionable');
         }
         
+        public function revisionUser()
+        {
+            return $this->hasOne('App\Models\User');
+        }
+
         public function revisionUserId()
         {
-            return Auth::user()->id;
+            return $this->revisionUser->id;
         }
     }
 
