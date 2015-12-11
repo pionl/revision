@@ -86,10 +86,7 @@ trait RevisionTrait
 
         $value = $this->$valueKey;
 
-        /*
-         * Check if the column key is inside
-         * the column means property array
-         */
+        // Check if the column key is inside the column means property array
         if($means = $this->getColumnMeans($this->key, $model)) {
             return $this->getColumnMeansProperty($means, $model, $value);
         }
@@ -107,7 +104,7 @@ trait RevisionTrait
      *
      * @return bool|string
      */
-    private function getColumnMeans($key, $model)
+    private function getColumnMeans($key, Model $model)
     {
         $columnsMean = $model->getRevisionColumnsMean();
 
@@ -129,34 +126,29 @@ trait RevisionTrait
      */
     private function getColumnMeansProperty($key, $model, $value)
     {
-        // Explode the dot notated key
+        // Explode the dot notated key.
         $attributes = explode('.', $key);
 
-        // Assign a temporary object to the specified model
+        // Assign a temporary object to the specified model.
         $tmpStr = $model;
 
         // Go through each attribute
         foreach ($attributes as $attribute) {
             if ($attribute === end($attributes)) {
-                /*
-                 * If we're at the end of the attributes array,
-                 * we'll see if the temporary object is an instance
-                 * of an Eloquent Model.
-                 */
+                // If we're at the end of the attributes array,
+                // we'll see if the temporary object is
+                // an instance of an Eloquent Model.
                 if ($tmpStr instanceof Model) {
                     if($tmpStr->hasGetMutator($attribute)) {
-                        /*
-                         * If the relationship model has a get mutator
-                         * for the current attrubte, we'll run it through
-                         * the mutator and pass on the revisioned value.
-                         */
+                        // If the relationship model has a get mutator
+                        // for the current attrubte, we'll run it
+                        // through the mutator and pass on the
+                        // revisioned value.
                         $tmpStr = $tmpStr->mutateAttribute($attribute, $value);
                     } else {
-                        /*
-                         * Looks like the relationship model doesn't
-                         * have a mutator for the attribute, we'll
-                         * return the models attribute.
-                         */
+                        // Looks like the relationship model doesn't
+                        // have a mutator for the attribute, we'll
+                        // return the models attribute.
                         $tmpStr = $tmpStr->$attribute;
                     }
                 }

@@ -73,17 +73,11 @@ trait HasRevisionsTrait
         $columns = $this->getRevisionColumns();
 
         foreach($columns as $column) {
-            /*
-             * Make sure the column exists
-             * inside the original attributes array
-             */
+            // Make sure the column exists inside the original attributes array
             if(array_key_exists($column, $this->revisionOriginalAttributes)) {
                 $originalValue = $this->revisionOriginalAttributes[$column];
 
-                /*
-                 * Only create a new revision
-                 * record if the value has changed
-                 */
+                // Only create a new revision record if the value has changed
                 if($originalValue  != $this->getAttribute($column)) {
                     // Retrieve the old value from the original attributes property.
                     $oldValue = array_get($this->revisionOriginalAttributes, $column);
@@ -155,29 +149,20 @@ trait HasRevisionsTrait
      *
      * @return array
      */
-    private function getRevisionColumns()
+    protected function getRevisionColumns()
     {
-        $columns = $this->revisionColumns;
+        $columns = (is_array($this->revisionColumns) ? $this->revisionColumns : []);
 
-        if(is_array($columns) && count($columns) > 0)
-        {
-            /*
-             * If the amount of columns is equal to one,
-             * and the column is equal to the star character,
-             * we'll retrieve all the attribute keys indicating
-             * the table columns.
-             */
-            if(count($columns) === 1 && $columns[0] === '*')
-            {
-                $columns = Schema::getColumnListing($this->getTable());
-            }
-        } else {
-            $columns = [];
+        if(count($columns) === 1 && $columns[0] === '*') {
+            // If the amount of columns is equal to one, and
+            // the column is equal to the star character,
+            // we'll retrieve all the attribute keys
+            // indicating the table columns.
+             $columns = Schema::getColumnListing($this->getTable());
         }
 
         // Filter the returned columns by the columns to avoid
-        return array_filter($columns, function($column)
-        {
+        return array_filter($columns, function($column) {
             $columnsToAvoid = $this->revisionColumnsToAvoid;
 
             if(is_array($columnsToAvoid) && count($columnsToAvoid) > 0) {
