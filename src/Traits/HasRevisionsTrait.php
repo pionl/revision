@@ -4,6 +4,7 @@ namespace Stevebauman\Revision\Traits;
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Stevebauman\Revision\Models\Revision;
 
 trait HasRevisionsTrait
 {
@@ -184,7 +185,11 @@ trait HasRevisionsTrait
      */
     private function processCreateRevisionRecord($key, $oldValue, $newValue)
     {
-        // Construct a new revision model instance.
+        /**
+         * Construct a new revision model instance. The instance can be different class.
+         * Base revision class used only for autocomplete.
+         * @var Revision $revision
+         */
         $revision = $this->revisions()->getRelated()->newInstance();
 
         $revision->revisionable_type = get_class($this);

@@ -1,0 +1,35 @@
+<?php
+
+namespace Stevebauman\Revision\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Stevebauman\Revision\Traits\RevisionTrait;
+
+/**
+ * Class Revision
+ *
+ * The base revision implementation for easy usage. Uses Auth model via config entry.
+ *
+ * @property string     revisionable_type
+ * @property int        revisionable_id
+ * @property int|string user_id
+ * @property int|string key
+ * @property mixed      old_value
+ * @property mixed      new_value
+ * @package Stevebauman\Revision\Traits
+ */
+class Revision extends Model
+{
+    use RevisionTrait;
+
+    /**
+     * @return mixed
+     */
+    public function user()
+    {
+        $user_model = app('config')->get('auth.model');
+
+        return $this->belongsTo($user_model);
+    }
+
+}
