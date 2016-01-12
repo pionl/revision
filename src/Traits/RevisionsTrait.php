@@ -2,6 +2,7 @@
 
 namespace Stevebauman\Revision\Traits;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Stevebauman\Revision\Models\Revision;
 
 /**
  * Trait RevisionsTrait
@@ -13,6 +14,15 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 trait RevisionsTrait
 {
     use HasRevisionsTrait;
+
+    /**
+     * Returns the class for revision model
+     * @return string
+     */
+    protected function getRevisionModelClass()
+    {
+        return Revision::class;
+    }
 
     /**
      * Uses the Eloquents method to get the table
@@ -29,7 +39,7 @@ trait RevisionsTrait
      */
     public function revisions()
     {
-        return $this->morphMany("Stevebauman\\Revision\\Models\\Revision", "revisionable");
+        return $this->morphMany($this->getRevisionModelClass(), "revisionable");
     }
 
     /**
