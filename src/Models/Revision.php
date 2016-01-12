@@ -23,13 +23,21 @@ class Revision extends Model
     use RevisionTrait;
 
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
-        $user_model = app('config')->get('auth.model');
+        $user_model = $this->getUserModel();
 
         return $this->belongsTo($user_model);
     }
 
+    /**
+     * Returns the user model
+     * @return string
+     */
+    protected function getUserModel()
+    {
+        return app('config')->get('auth.model');
+    }
 }
