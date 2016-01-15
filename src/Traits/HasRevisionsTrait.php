@@ -192,7 +192,7 @@ trait HasRevisionsTrait
          */
         $revision = $this->revisions()->getRelated()->newInstance();
 
-        $revision->revisionable_type = get_class($this);
+        $revision->revisionable_type = $this->getMorphClass();
         $revision->revisionable_id = $this->getKey();
         $revision->user_id = $this->revisionUserId();
         $revision->key = $key;
