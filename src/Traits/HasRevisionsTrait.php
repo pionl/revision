@@ -6,6 +6,15 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Stevebauman\Revision\Models\Revision;
 
+/**
+ * Class HasRevisionsTrait
+ *
+ * @property array revisionColumns
+ * @property bool revisionCollumnsUseFillable
+ * @property array revisionColumnsToAvoid
+ *
+ * @package Stevebauman\Revision\Traits
+ */
 trait HasRevisionsTrait
 {
     /**
@@ -153,6 +162,10 @@ trait HasRevisionsTrait
     protected function getRevisionColumns()
     {
         $columns = (is_array($this->revisionColumns) ? $this->revisionColumns : []);
+
+        if (property_exists($this, "revisionCollumnsUseFillable") && $this->revisionCollumnsUseFillable) {
+            $columns = array_merge($columns, $this->getFillable());
+        }
 
         if(count($columns) === 1 && $columns[0] === '*') {
             // If the amount of columns is equal to one, and

@@ -3,7 +3,6 @@
 namespace Stevebauman\Revision\Traits;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Support\Facades\Auth;
 use Stevebauman\Revision\Models\Revision;
 
 /**

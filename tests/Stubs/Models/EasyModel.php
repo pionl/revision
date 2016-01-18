@@ -11,4 +11,9 @@ class EasyModel extends Model
 
     protected $table = "easy_models";
 
+    protected $fillable = [
+        "title", "description"
+    ];
+
+    protected $revisionCollumnsUseFillable = true;
 }
