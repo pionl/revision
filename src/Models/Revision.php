@@ -38,6 +38,13 @@ class Revision extends Model
      */
     protected function getUserModel()
     {
-        return app('config')->get('auth.model');
+        // need only major and minor version
+        $version = floatval(app()->version());
+
+        if ($version >= 5.2) {
+            return app('config')->get('auth.providers.users.model');
+        } else {
+            return app('config')->get('auth.model');
+        }
     }
 }
